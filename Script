@@ -1,0 +1,806 @@
+local engine = loadstring(game:HttpGet("https://raw.githubusercontent.com/Singularity5490/rbimgui-2/main/rbimgui-2.lua"))()
+
+local window1 = engine.new({
+    text = "Blox Fruits Esp",
+    size = UDim2.new(300, 200),
+})
+
+window1.open()
+
+local tab1 = window1.new({
+    text = "Tracers",
+})
+
+local tab2 = window1.new({
+    text = "3D Box",
+})
+
+local tab3 = window1.new({
+    text = "Names",
+})
+
+local tab4 = window1.new({
+    text = "Fruits",
+})
+
+local tab5 = window1.new({
+    text = "Misc",
+})
+
+local button1 = tab1.new("button", {
+    text = "Tracers",
+})
+
+button1.event:Connect(function()
+--// Locals:
+local workspace = game:GetService("Workspace")
+local player = game:GetService("Players").LocalPlayer
+local camera = workspace.CurrentCamera
+
+--// Settings:
+local on = true -- Use this if your making gui
+
+local Box_Color = Color3.fromRGB(255, 255, 255)
+local Box_Thickness = 2
+local Box_Transparency = 0 -- 1 Visible, 0 Not Visible
+
+local Tracers = true
+local Tracer_Color = Color3.fromRGB(255, 255, 255)
+local Tracer_Thickness = 2
+local Tracer_Transparency = 1 -- 1 Visible, 0 Not Visible
+
+local Autothickness = true -- Makes screen less encumbered
+
+local Team_Check = true
+local red = Color3.fromRGB(255, 255, 255)
+local green = Color3.fromRGB(255, 255, 255)
+
+local function NewLine()
+    local line = Drawing.new("Line")
+    line.Visible = false
+    line.From = Vector2.new(0, 0)
+    line.To = Vector2.new(1, 1)
+    line.Color = Box_Color
+    line.Thickness = Box_Thickness
+    line.Transparency = Box_Transparency
+    return line
+end
+
+--// Main Function:
+for i, v in pairs(game.Players:GetChildren()) do
+    --// Lines for 3D box (12)
+    local lines = {
+        line1 = NewLine(),
+        line2 = NewLine(),
+        line3 = NewLine(),
+        line4 = NewLine(),
+        line5 = NewLine(),
+        line6 = NewLine(),
+        line7 = NewLine(),
+        line8 = NewLine(),
+        line9 = NewLine(),
+        line10 = NewLine(),
+        line11 = NewLine(),
+        line12 = NewLine(),
+        Tracer = NewLine()
+    }
+
+    lines.Tracer.Color = Tracer_Color
+    lines.Tracer.Thickness = Tracer_Thickness
+    lines.Tracer.Transparency = Tracer_Transparency
+
+    --// Updates ESP (lines) in render loop
+    local function ESP()
+        local connection
+        connection = game:GetService("RunService").RenderStepped:Connect(function()
+            if on and v.Character ~= nil and v.Character:FindFirstChild("Humanoid") ~= nil and v.Character:FindFirstChild("HumanoidRootPart") ~= nil and v.Name ~= player.Name and v.Character.Humanoid.Health > 0 and v.Character:FindFirstChild("Head") ~= nil then
+                local pos, vis = camera:WorldToViewportPoint(v.Character.HumanoidRootPart.Position)
+                if vis then
+                    local Scale = v.Character.Head.Size.Y/2
+                    local Size = Vector3.new(2, 3, 1.5) * (Scale * 2) -- Change this for different box size
+
+                    local Top1 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, Size.Y, -Size.Z)).p)
+                    local Top2 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, Size.Y, Size.Z)).p)
+                    local Top3 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, Size.Y, Size.Z)).p)
+                    local Top4 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, Size.Y, -Size.Z)).p)
+
+                    local Bottom1 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, -Size.Y, -Size.Z)).p)
+                    local Bottom2 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, -Size.Y, Size.Z)).p)
+                    local Bottom3 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, -Size.Y, Size.Z)).p)
+                    local Bottom4 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, -Size.Y, -Size.Z)).p)
+
+                    --// Top:
+                    lines.line1.From = Vector2.new(Top1.X, Top1.Y)
+                    lines.line1.To = Vector2.new(Top2.X, Top2.Y)
+
+                    lines.line2.From = Vector2.new(Top2.X, Top2.Y)
+                    lines.line2.To = Vector2.new(Top3.X, Top3.Y)
+
+                    lines.line3.From = Vector2.new(Top3.X, Top3.Y)
+                    lines.line3.To = Vector2.new(Top4.X, Top4.Y)
+
+                    lines.line4.From = Vector2.new(Top4.X, Top4.Y)
+                    lines.line4.To = Vector2.new(Top1.X, Top1.Y)
+
+                    --// Bottom:
+                    lines.line5.From = Vector2.new(Bottom1.X, Bottom1.Y)
+                    lines.line5.To = Vector2.new(Bottom2.X, Bottom2.Y)
+
+                    lines.line6.From = Vector2.new(Bottom2.X, Bottom2.Y)
+                    lines.line6.To = Vector2.new(Bottom3.X, Bottom3.Y)
+
+                    lines.line7.From = Vector2.new(Bottom3.X, Bottom3.Y)
+                    lines.line7.To = Vector2.new(Bottom4.X, Bottom4.Y)
+
+                    lines.line8.From = Vector2.new(Bottom4.X, Bottom4.Y)
+                    lines.line8.To = Vector2.new(Bottom1.X, Bottom1.Y)
+
+                    --//S ides:
+                    lines.line9.From = Vector2.new(Bottom1.X, Bottom1.Y)
+                    lines.line9.To = Vector2.new(Top1.X, Top1.Y)
+
+                    lines.line10.From = Vector2.new(Bottom2.X, Bottom2.Y)
+                    lines.line10.To = Vector2.new(Top2.X, Top2.Y)
+
+                    lines.line11.From = Vector2.new(Bottom3.X, Bottom3.Y)
+                    lines.line11.To = Vector2.new(Top3.X, Top3.Y)
+
+                    lines.line12.From = Vector2.new(Bottom4.X, Bottom4.Y)
+                    lines.line12.To = Vector2.new(Top4.X, Top4.Y)
+
+                    --// Tracer:
+                    if Tracers then
+                        local trace = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(0, -Size.Y, 0)).p)
+
+                        lines.Tracer.From = Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y)
+                        lines.Tracer.To = Vector2.new(trace.X, trace.Y)
+                    end
+
+                    --// Teamcheck:
+                    if Team_Check then
+                        if v.TeamColor == player.TeamColor then
+                            for u, x in pairs(lines) do
+                                x.Color = green
+                            end
+                        else 
+                            for u, x in pairs(lines) do
+                                x.Color = red
+                            end
+                        end
+                    end
+
+                    --// Autothickness:
+                    if Autothickness then
+                        local distance = (player.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).magnitude
+                        local value = math.clamp(1/distance*100, 0.1, 4) --0.1 is min thickness, 6 is max
+                        for u, x in pairs(lines) do
+                            x.Thickness = value
+                        end
+                    else 
+                        for u, x in pairs(lines) do
+                            x.Thickness = Box_Thickness
+                        end
+                    end
+
+                    for u, x in pairs(lines) do
+                        if x ~= lines.Tracer then
+                            x.Visible = true
+                        end
+                    end
+                    if Tracers then
+                        lines.Tracer.Visible = true
+                    end
+                else 
+                    for u, x in pairs(lines) do
+                        x.Visible = false
+                    end
+                end
+            else 
+                for u, x in pairs(lines) do
+                    x.Visible = false
+                end
+                if game.Players:FindFirstChild(v.Name) == nil then
+                    connection:Disconnect()
+                end
+            end
+        end)
+    end
+    coroutine.wrap(ESP)()
+end
+
+game.Players.PlayerAdded:Connect(function(newplr)
+    --// Lines for 3D box (12)
+    local lines = {
+        line1 = NewLine(),
+        line2 = NewLine(),
+        line3 = NewLine(),
+        line4 = NewLine(),
+        line5 = NewLine(),
+        line6 = NewLine(),
+        line7 = NewLine(),
+        line8 = NewLine(),
+        line9 = NewLine(),
+        line10 = NewLine(),
+        line11 = NewLine(),
+        line12 = NewLine(),
+        Tracer = NewLine()
+    }
+
+    lines.Tracer.Color = Tracer_Color
+    lines.Tracer.Thickness = Tracer_Thickness
+    lines.Tracer.Transparency = Tracer_Transparency
+
+    --// Updates ESP (lines) in render loop
+    local function ESP()
+        local connection
+        connection = game:GetService("RunService").RenderStepped:Connect(function()
+            if on and newplr.Character ~= nil and newplr.Character:FindFirstChild("Humanoid") ~= nil and newplr.Character:FindFirstChild("HumanoidRootPart") ~= nil and newplr.Name ~= player.Name and newplr.Character.Humanoid.Health > 0 and newplr.Character:FindFirstChild("Head") ~= nil then
+                local pos, vis = camera:WorldToViewportPoint(newplr.Character.HumanoidRootPart.Position)
+                if vis then
+                    local Scale = newplr.Character.Head.Size.Y/2
+                    local Size = Vector3.new(2, 3, 1.5) * (Scale * 2) -- Change this for different box size
+
+                    local Top1 = camera:WorldToViewportPoint((newplr.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, Size.Y, -Size.Z)).p)
+                    local Top2 = camera:WorldToViewportPoint((newplr.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, Size.Y, Size.Z)).p)
+                    local Top3 = camera:WorldToViewportPoint((newplr.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, Size.Y, Size.Z)).p)
+                    local Top4 = camera:WorldToViewportPoint((newplr.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, Size.Y, -Size.Z)).p)
+
+                    local Bottom1 = camera:WorldToViewportPoint((newplr.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, -Size.Y, -Size.Z)).p)
+                    local Bottom2 = camera:WorldToViewportPoint((newplr.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, -Size.Y, Size.Z)).p)
+                    local Bottom3 = camera:WorldToViewportPoint((newplr.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, -Size.Y, Size.Z)).p)
+                    local Bottom4 = camera:WorldToViewportPoint((newplr.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, -Size.Y, -Size.Z)).p)
+
+                    --// Top:
+                    lines.line1.From = Vector2.new(Top1.X, Top1.Y)
+                    lines.line1.To = Vector2.new(Top2.X, Top2.Y)
+
+                    lines.line2.From = Vector2.new(Top2.X, Top2.Y)
+                    lines.line2.To = Vector2.new(Top3.X, Top3.Y)
+
+                    lines.line3.From = Vector2.new(Top3.X, Top3.Y)
+                    lines.line3.To = Vector2.new(Top4.X, Top4.Y)
+
+                    lines.line4.From = Vector2.new(Top4.X, Top4.Y)
+                    lines.line4.To = Vector2.new(Top1.X, Top1.Y)
+
+                    --// Bottom:
+                    lines.line5.From = Vector2.new(Bottom1.X, Bottom1.Y)
+                    lines.line5.To = Vector2.new(Bottom2.X, Bottom2.Y)
+
+                    lines.line6.From = Vector2.new(Bottom2.X, Bottom2.Y)
+                    lines.line6.To = Vector2.new(Bottom3.X, Bottom3.Y)
+
+                    lines.line7.From = Vector2.new(Bottom3.X, Bottom3.Y)
+                    lines.line7.To = Vector2.new(Bottom4.X, Bottom4.Y)
+
+                    lines.line8.From = Vector2.new(Bottom4.X, Bottom4.Y)
+                    lines.line8.To = Vector2.new(Bottom1.X, Bottom1.Y)
+
+                    --//S ides:
+                    lines.line9.From = Vector2.new(Bottom1.X, Bottom1.Y)
+                    lines.line9.To = Vector2.new(Top1.X, Top1.Y)
+
+                    lines.line10.From = Vector2.new(Bottom2.X, Bottom2.Y)
+                    lines.line10.To = Vector2.new(Top2.X, Top2.Y)
+
+                    lines.line11.From = Vector2.new(Bottom3.X, Bottom3.Y)
+                    lines.line11.To = Vector2.new(Top3.X, Top3.Y)
+
+                    lines.line12.From = Vector2.new(Bottom4.X, Bottom4.Y)
+                    lines.line12.To = Vector2.new(Top4.X, Top4.Y)
+
+                    --// Tracer:
+                    if Tracers then
+                        local trace = camera:WorldToViewportPoint((newplr.Character.HumanoidRootPart.CFrame * CFrame.new(0, -Size.Y, 0)).p)
+                        lines.Tracer.From = Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y)
+                        lines.Tracer.To = Vector2.new(trace.X, trace.Y)
+                    end
+
+                    --// Teamcheck:
+                    if Team_Check then
+                        if newplr.TeamColor == player.TeamColor then
+                            for u, x in pairs(lines) do
+                                x.Color = green
+                            end
+                        else 
+                            for u, x in pairs(lines) do
+                                x.Color = red
+                            end
+                        end
+                    end
+
+                    --// Autothickness:
+                    if Autothickness then
+                        local distance = (player.Character.HumanoidRootPart.Position - newplr.Character.HumanoidRootPart.Position).magnitude
+                        local value = math.clamp(1/distance*100, 0.1, 4) --0.1 is min thickness, 6 is max
+                        for u, x in pairs(lines) do
+                            x.Thickness = value
+                        end
+                    else 
+                        for u, x in pairs(lines) do
+                            x.Thickness = Box_Thickness
+                        end
+                    end
+
+                    for u, x in pairs(lines) do
+                        if x ~= lines.Tracer then
+                            x.Visible = true
+                        end
+                    end
+                    if Tracers then
+                        lines.Tracer.Visible = true
+                    end
+                else 
+                    for u, x in pairs(lines) do
+                        x.Visible = false
+                    end
+                end
+            else 
+                for u, x in pairs(lines) do
+                    x.Visible = false
+                end
+                if game.Players:FindFirstChild(newplr.Name) == nil then
+                    connection:Disconnect()
+                end
+            end
+        end)
+    end
+    coroutine.wrap(ESP)()
+end)
+end)
+
+local button2 = tab2.new("button", {
+    text = "3D Box",
+})
+
+button2.event:Connect(function()
+    --// Locals:
+local workspace = game:GetService("Workspace")
+local player = game:GetService("Players").LocalPlayer
+local camera = workspace.CurrentCamera
+
+--// Settings:
+local on = true -- Use this if your making gui
+
+local Box_Color = Color3.fromRGB(255, 255, 255)
+local Box_Thickness = 2
+local Box_Transparency = 1 -- 1 Visible, 0 Not Visible
+
+local Tracers = false
+local Tracer_Color = Color3.fromRGB(255, 255, 255)
+local Tracer_Thickness = 2
+local Tracer_Transparency = 1 -- 1 Visible, 0 Not Visible
+
+local Autothickness = true -- Makes screen less encumbered
+
+local Team_Check = true
+local red = Color3.fromRGB(255, 255, 255)
+local green = Color3.fromRGB(255, 255, 255)
+
+local function NewLine()
+    local line = Drawing.new("Line")
+    line.Visible = false
+    line.From = Vector2.new(0, 0)
+    line.To = Vector2.new(1, 1)
+    line.Color = Box_Color
+    line.Thickness = Box_Thickness
+    line.Transparency = Box_Transparency
+    return line
+end
+
+--// Main Function:
+for i, v in pairs(game.Players:GetChildren()) do
+    --// Lines for 3D box (12)
+    local lines = {
+        line1 = NewLine(),
+        line2 = NewLine(),
+        line3 = NewLine(),
+        line4 = NewLine(),
+        line5 = NewLine(),
+        line6 = NewLine(),
+        line7 = NewLine(),
+        line8 = NewLine(),
+        line9 = NewLine(),
+        line10 = NewLine(),
+        line11 = NewLine(),
+        line12 = NewLine(),
+        Tracer = NewLine()
+    }
+
+    lines.Tracer.Color = Tracer_Color
+    lines.Tracer.Thickness = Tracer_Thickness
+    lines.Tracer.Transparency = Tracer_Transparency
+
+    --// Updates ESP (lines) in render loop
+    local function ESP()
+        local connection
+        connection = game:GetService("RunService").RenderStepped:Connect(function()
+            if on and v.Character ~= nil and v.Character:FindFirstChild("Humanoid") ~= nil and v.Character:FindFirstChild("HumanoidRootPart") ~= nil and v.Name ~= player.Name and v.Character.Humanoid.Health > 0 and v.Character:FindFirstChild("Head") ~= nil then
+                local pos, vis = camera:WorldToViewportPoint(v.Character.HumanoidRootPart.Position)
+                if vis then
+                    local Scale = v.Character.Head.Size.Y/2
+                    local Size = Vector3.new(2, 3, 1.5) * (Scale * 2) -- Change this for different box size
+
+                    local Top1 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, Size.Y, -Size.Z)).p)
+                    local Top2 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, Size.Y, Size.Z)).p)
+                    local Top3 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, Size.Y, Size.Z)).p)
+                    local Top4 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, Size.Y, -Size.Z)).p)
+
+                    local Bottom1 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, -Size.Y, -Size.Z)).p)
+                    local Bottom2 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, -Size.Y, Size.Z)).p)
+                    local Bottom3 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, -Size.Y, Size.Z)).p)
+                    local Bottom4 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, -Size.Y, -Size.Z)).p)
+
+                    --// Top:
+                    lines.line1.From = Vector2.new(Top1.X, Top1.Y)
+                    lines.line1.To = Vector2.new(Top2.X, Top2.Y)
+
+                    lines.line2.From = Vector2.new(Top2.X, Top2.Y)
+                    lines.line2.To = Vector2.new(Top3.X, Top3.Y)
+
+                    lines.line3.From = Vector2.new(Top3.X, Top3.Y)
+                    lines.line3.To = Vector2.new(Top4.X, Top4.Y)
+
+                    lines.line4.From = Vector2.new(Top4.X, Top4.Y)
+                    lines.line4.To = Vector2.new(Top1.X, Top1.Y)
+
+                    --// Bottom:
+                    lines.line5.From = Vector2.new(Bottom1.X, Bottom1.Y)
+                    lines.line5.To = Vector2.new(Bottom2.X, Bottom2.Y)
+
+                    lines.line6.From = Vector2.new(Bottom2.X, Bottom2.Y)
+                    lines.line6.To = Vector2.new(Bottom3.X, Bottom3.Y)
+
+                    lines.line7.From = Vector2.new(Bottom3.X, Bottom3.Y)
+                    lines.line7.To = Vector2.new(Bottom4.X, Bottom4.Y)
+
+                    lines.line8.From = Vector2.new(Bottom4.X, Bottom4.Y)
+                    lines.line8.To = Vector2.new(Bottom1.X, Bottom1.Y)
+
+                    --//S ides:
+                    lines.line9.From = Vector2.new(Bottom1.X, Bottom1.Y)
+                    lines.line9.To = Vector2.new(Top1.X, Top1.Y)
+
+                    lines.line10.From = Vector2.new(Bottom2.X, Bottom2.Y)
+                    lines.line10.To = Vector2.new(Top2.X, Top2.Y)
+
+                    lines.line11.From = Vector2.new(Bottom3.X, Bottom3.Y)
+                    lines.line11.To = Vector2.new(Top3.X, Top3.Y)
+
+                    lines.line12.From = Vector2.new(Bottom4.X, Bottom4.Y)
+                    lines.line12.To = Vector2.new(Top4.X, Top4.Y)
+
+                    --// Tracer:
+                    if Tracers then
+                        local trace = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(0, -Size.Y, 0)).p)
+
+                        lines.Tracer.From = Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y)
+                        lines.Tracer.To = Vector2.new(trace.X, trace.Y)
+                    end
+
+                    --// Teamcheck:
+                    if Team_Check then
+                        if v.TeamColor == player.TeamColor then
+                            for u, x in pairs(lines) do
+                                x.Color = green
+                            end
+                        else 
+                            for u, x in pairs(lines) do
+                                x.Color = red
+                            end
+                        end
+                    end
+
+                    --// Autothickness:
+                    if Autothickness then
+                        local distance = (player.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).magnitude
+                        local value = math.clamp(1/distance*100, 0.1, 4) --0.1 is min thickness, 6 is max
+                        for u, x in pairs(lines) do
+                            x.Thickness = value
+                        end
+                    else 
+                        for u, x in pairs(lines) do
+                            x.Thickness = Box_Thickness
+                        end
+                    end
+
+                    for u, x in pairs(lines) do
+                        if x ~= lines.Tracer then
+                            x.Visible = true
+                        end
+                    end
+                    if Tracers then
+                        lines.Tracer.Visible = true
+                    end
+                else 
+                    for u, x in pairs(lines) do
+                        x.Visible = false
+                    end
+                end
+            else 
+                for u, x in pairs(lines) do
+                    x.Visible = false
+                end
+                if game.Players:FindFirstChild(v.Name) == nil then
+                    connection:Disconnect()
+                end
+            end
+        end)
+    end
+    coroutine.wrap(ESP)()
+end
+
+game.Players.PlayerAdded:Connect(function(newplr)
+    --// Lines for 3D box (12)
+    local lines = {
+        line1 = NewLine(),
+        line2 = NewLine(),
+        line3 = NewLine(),
+        line4 = NewLine(),
+        line5 = NewLine(),
+        line6 = NewLine(),
+        line7 = NewLine(),
+        line8 = NewLine(),
+        line9 = NewLine(),
+        line10 = NewLine(),
+        line11 = NewLine(),
+        line12 = NewLine(),
+        Tracer = NewLine()
+    }
+
+    lines.Tracer.Color = Tracer_Color
+    lines.Tracer.Thickness = Tracer_Thickness
+    lines.Tracer.Transparency = Tracer_Transparency
+
+    --// Updates ESP (lines) in render loop
+    local function ESP()
+        local connection
+        connection = game:GetService("RunService").RenderStepped:Connect(function()
+            if on and newplr.Character ~= nil and newplr.Character:FindFirstChild("Humanoid") ~= nil and newplr.Character:FindFirstChild("HumanoidRootPart") ~= nil and newplr.Name ~= player.Name and newplr.Character.Humanoid.Health > 0 and newplr.Character:FindFirstChild("Head") ~= nil then
+                local pos, vis = camera:WorldToViewportPoint(newplr.Character.HumanoidRootPart.Position)
+                if vis then
+                    local Scale = newplr.Character.Head.Size.Y/2
+                    local Size = Vector3.new(2, 3, 1.5) * (Scale * 2) -- Change this for different box size
+
+                    local Top1 = camera:WorldToViewportPoint((newplr.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, Size.Y, -Size.Z)).p)
+                    local Top2 = camera:WorldToViewportPoint((newplr.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, Size.Y, Size.Z)).p)
+                    local Top3 = camera:WorldToViewportPoint((newplr.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, Size.Y, Size.Z)).p)
+                    local Top4 = camera:WorldToViewportPoint((newplr.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, Size.Y, -Size.Z)).p)
+
+                    local Bottom1 = camera:WorldToViewportPoint((newplr.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, -Size.Y, -Size.Z)).p)
+                    local Bottom2 = camera:WorldToViewportPoint((newplr.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, -Size.Y, Size.Z)).p)
+                    local Bottom3 = camera:WorldToViewportPoint((newplr.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, -Size.Y, Size.Z)).p)
+                    local Bottom4 = camera:WorldToViewportPoint((newplr.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, -Size.Y, -Size.Z)).p)
+
+                    --// Top:
+                    lines.line1.From = Vector2.new(Top1.X, Top1.Y)
+                    lines.line1.To = Vector2.new(Top2.X, Top2.Y)
+
+                    lines.line2.From = Vector2.new(Top2.X, Top2.Y)
+                    lines.line2.To = Vector2.new(Top3.X, Top3.Y)
+
+                    lines.line3.From = Vector2.new(Top3.X, Top3.Y)
+                    lines.line3.To = Vector2.new(Top4.X, Top4.Y)
+
+                    lines.line4.From = Vector2.new(Top4.X, Top4.Y)
+                    lines.line4.To = Vector2.new(Top1.X, Top1.Y)
+
+                    --// Bottom:
+                    lines.line5.From = Vector2.new(Bottom1.X, Bottom1.Y)
+                    lines.line5.To = Vector2.new(Bottom2.X, Bottom2.Y)
+
+                    lines.line6.From = Vector2.new(Bottom2.X, Bottom2.Y)
+                    lines.line6.To = Vector2.new(Bottom3.X, Bottom3.Y)
+
+                    lines.line7.From = Vector2.new(Bottom3.X, Bottom3.Y)
+                    lines.line7.To = Vector2.new(Bottom4.X, Bottom4.Y)
+
+                    lines.line8.From = Vector2.new(Bottom4.X, Bottom4.Y)
+                    lines.line8.To = Vector2.new(Bottom1.X, Bottom1.Y)
+
+                    --//S ides:
+                    lines.line9.From = Vector2.new(Bottom1.X, Bottom1.Y)
+                    lines.line9.To = Vector2.new(Top1.X, Top1.Y)
+
+                    lines.line10.From = Vector2.new(Bottom2.X, Bottom2.Y)
+                    lines.line10.To = Vector2.new(Top2.X, Top2.Y)
+
+                    lines.line11.From = Vector2.new(Bottom3.X, Bottom3.Y)
+                    lines.line11.To = Vector2.new(Top3.X, Top3.Y)
+
+                    lines.line12.From = Vector2.new(Bottom4.X, Bottom4.Y)
+                    lines.line12.To = Vector2.new(Top4.X, Top4.Y)
+
+                    --// Tracer:
+                    if Tracers then
+                        local trace = camera:WorldToViewportPoint((newplr.Character.HumanoidRootPart.CFrame * CFrame.new(0, -Size.Y, 0)).p)
+                        lines.Tracer.From = Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y)
+                        lines.Tracer.To = Vector2.new(trace.X, trace.Y)
+                    end
+
+                    --// Teamcheck:
+                    if Team_Check then
+                        if newplr.TeamColor == player.TeamColor then
+                            for u, x in pairs(lines) do
+                                x.Color = green
+                            end
+                        else 
+                            for u, x in pairs(lines) do
+                                x.Color = red
+                            end
+                        end
+                    end
+
+                    --// Autothickness:
+                    if Autothickness then
+                        local distance = (player.Character.HumanoidRootPart.Position - newplr.Character.HumanoidRootPart.Position).magnitude
+                        local value = math.clamp(1/distance*100, 0.1, 4) --0.1 is min thickness, 6 is max
+                        for u, x in pairs(lines) do
+                            x.Thickness = value
+                        end
+                    else 
+                        for u, x in pairs(lines) do
+                            x.Thickness = Box_Thickness
+                        end
+                    end
+
+                    for u, x in pairs(lines) do
+                        if x ~= lines.Tracer then
+                            x.Visible = true
+                        end
+                    end
+                    if Tracers then
+                        lines.Tracer.Visible = true
+                    end
+                else 
+                    for u, x in pairs(lines) do
+                        x.Visible = false
+                    end
+                end
+            else 
+                for u, x in pairs(lines) do
+                    x.Visible = false
+                end
+                if game.Players:FindFirstChild(newplr.Name) == nil then
+                    connection:Disconnect()
+                end
+            end
+        end)
+    end
+    coroutine.wrap(ESP)()
+end)
+end)
+
+local button4 = tab3.new("button", {
+    text = "Names",
+})
+
+button1.event:Connect(function()
+    local c = workspace.CurrentCamera
+    local ps = game:GetService("Players")
+    local lp = ps.LocalPlayer
+    local rs = game:GetService("RunService")
+    
+    local function esp(p,cr)
+        local h = cr:WaitForChild("Humanoid")
+        local hrp = cr:WaitForChild("Head")
+    
+        local text = Drawing.new("Text")
+        text.Visible = false
+        text.Center = true
+        text.Outline = false 
+        text.Font = 3
+        text.Size = 16.16
+        text.Color = Color3.new(255,255,255)
+    
+        local conection
+        local conection2
+        local conection3
+    
+        local function dc()
+            text.Visible = false
+            text:Remove()
+            if conection then
+                conection:Disconnect()
+                conection = nil 
+            end
+            if conection2 then
+                conection2:Disconnect()
+                conection2 = nil 
+            end
+            if conection3 then
+                conection3:Disconnect()
+                conection3 = nil 
+            end
+        end
+    
+        conection2 = cr.AncestryChanged:Connect(function(_,parent)
+            if not parent then
+                dc()
+            end
+        end)
+    
+        conection3 = h.HealthChanged:Connect(function(v)
+            if (v<=0) or (h:GetState() == Enum.HumanoidStateType.Dead) then
+                dc()
+            end
+        end)
+    
+        conection = rs.RenderStepped:Connect(function()
+            local hrp_pos,hrp_onscreen = c:WorldToViewportPoint(hrp.Position)
+            if hrp_onscreen then
+                text.Position = Vector2.new(hrp_pos.X, hrp_pos.Y - 27)
+                text.Text = "[ "..p.Name.." ]"
+                text.Visible = true
+            else
+                text.Visible = false
+            end
+        end)
+    end
+    
+    local function p_added(p)
+        if p.Character then
+            esp(p,p.Character)
+        end
+        p.CharacterAdded:Connect(function(cr)
+            esp(p,cr)
+        end)
+    end
+    
+    for i,p in next, ps:GetPlayers() do 
+        if p ~= lp then
+            p_added(p)
+        end
+    end
+    
+    ps.PlayerAdded:Connect(p_added)
+end)
+
+local button3 = tab5.new("button", {
+    text = "Tp To Fruit",
+})
+
+button3.event:Connect(function()
+    local h = game.Players.LocalPlayer.Character.HumanoidRootPart
+ 
+for i, v in pairs(workspace:GetChildren()) do
+    if v:IsA("Tool")  then
+        if v.Fruit then
+              h.CFrame = v.Fruit.CFrame + Vector3.new(0,4,0)
+              wait(1)
+        end
+    end
+    if v:IsA("Model") and v.Name == "Fruit " then
+      if v.Fruit then
+              h.CFrame = v.Fruit.CFrame + Vector3.new(0,4,0)
+              wait(1)
+        end
+    end
+end
+end)
+
+local button6 = tab4.new("button", {
+    text = "Fruit Esp",
+})
+
+button6.event:Connect(function()
+    for i,v in pairs(game.Workspace:GetDescendants()) do -- grabs everything from workspace
+        if v.ClassName == 'TouchTransmitter' and v.Parent.Name == 'Handle' then -- checks if it has a handle and if its a touchtransmitter
+            local BillboardGui = Instance.new('BillboardGui') -- Makes Billboardgui
+            local TextLabel = Instance.new('TextLabel') -- makes text label
+            
+            BillboardGui.Parent = v.Parent -- what the billboardgui goes into
+            BillboardGui.AlwaysOnTop = true -- if its on top or not
+            BillboardGui.Size = UDim2.new(0, 50, 0, 50) -- size of it
+            BillboardGui.StudsOffset = Vector3.new(0,2,0)
+            
+            TextLabel.Parent = BillboardGui -- putting textlabel into billboardgui
+            TextLabel.BackgroundColor3 = Color3.new(1,1,1) -- color
+            TextLabel.BackgroundTransparency = 1 -- transparency
+            TextLabel.Size = UDim2.new(1, 0, 1, 0) -- size
+            TextLabel.Text = v.Parent.Parent.Name -- what the label says
+            TextLabel.TextColor3 = Color3.new(1, 0, 0) -- color
+            TextLabel.TextScaled = true -- if the text is scaled or not
+        end
+        end
+end)
